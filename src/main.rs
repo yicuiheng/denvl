@@ -8,19 +8,42 @@ mod syntax_node;
 
 use crate::diagnostic::Diagnostic;
 use crate::source::{Range, Source};
+use clap::{command, Arg, Command};
 use std::collections::VecDeque;
 use std::path::PathBuf;
 
+const RUN_COMMAND: &str = "run";
+const SERVER_COMMAND: &str = "__server";
+
 fn main() {
-    let args: Vec<_> = std::env::args().collect();
-    let filename = args.get(1).expect("<filename> required");
-    let pathbuf = PathBuf::from(filename.as_str());
-    let source = Source::new(pathbuf.as_path()).expect("fail to read file");
-    let (syntax_node, diagnostics) = parse::parse(&source);
+    let matches = command!()
+        .subcommand_required(true)
+        .subcommand(
+            Command::new(RUN_COMMAND)
+                .about("compile and run specified denvl source file")
+                .arg(Arg::new("filename").required(true)),
+        )
+        .subcommand(Command::new(SERVER_COMMAND).hide(true))
+        .get_matches();
 
-    print_diagnostics(filename, &source, diagnostics);
+    match matches.subcommand() {
+        Some((RUN_COMMAND, sub_matches)) => {
+            let filename = sub_matches
+                .get_one::<String>("filename")
+                .expect("<filename> required");
+            let pathbuf = PathBuf::from(filename);
+            let source = Source::new(pathbuf.as_path()).expect("fail to read file");
+            let (syntax_node, diagnostics) = parse::parse(&source);
 
-    eprintln!("parsed tree: {:?}", syntax_node);
+            print_diagnostics(filename, &source, diagnostics);
+
+            eprintln!("parsed tree: {:?}", syntax_node);
+        }
+        Some((SERVER_COMMAND, _)) => {
+            todo!()
+        }
+        _ => unreachable!(),
+    }
 }
 
 fn print_diagnostics(filename: &str, source: &Source, mut diagnostics: VecDeque<Diagnostic>) {
