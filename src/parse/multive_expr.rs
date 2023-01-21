@@ -136,13 +136,13 @@ impl Parser {
                 let (skipped_width, mut diagnostics_, range) = skip::until_not_error(source, range);
                 diagnostics.append(&mut diagnostics_);
                 token.trailing_trivia_width += skipped_width;
-                return Some((token, diagnostics, range));
+                Some((token, diagnostics, range))
             }
             TokenKind::Plus
             | TokenKind::Minus
             | TokenKind::Semicolon
             | TokenKind::CloseParen
-            | TokenKind::Error => return None,
+            | TokenKind::Error => None,
             _ => {
                 // 式の始まり
                 // 演算子書き忘れ
@@ -171,7 +171,7 @@ impl Parser {
                     trailing_trivia_width: 0,
                 };
 
-                return Some((token, diagnostics, range));
+                Some((token, diagnostics, range))
             }
         }
     }

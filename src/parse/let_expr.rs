@@ -20,7 +20,7 @@ impl Parser {
 
         let tokens = peek_token_kinds(source, range, 2);
         let (mut ident_token, equal_token) = match tokens.as_slice() {
-            &[TokenKind::Ident, TokenKind::Equal] => {
+            [TokenKind::Ident, TokenKind::Equal] => {
                 let ident_lex_result = lex(source, range);
                 assert_eq!(ident_lex_result.token.kind, TokenKind::Ident);
                 range = ident_lex_result.remaining_range;
@@ -29,7 +29,7 @@ impl Parser {
                 range = equal_lex_result.remaining_range;
                 (ident_lex_result.token, equal_lex_result.token)
             }
-            &[TokenKind::Ident, _] => {
+            [TokenKind::Ident, _] => {
                 let ident_lex_result = lex(source, range);
                 assert_eq!(ident_lex_result.token.kind, TokenKind::Ident);
                 range = ident_lex_result.remaining_range;
@@ -39,7 +39,7 @@ impl Parser {
                     SyntaxToken::make_empty(TokenKind::Equal),
                 )
             }
-            &[TokenKind::Equal, _] => {
+            [TokenKind::Equal, _] => {
                 diagnostics.push_back(missed_token_error(range.start, vec![TokenKind::Ident]));
                 let equal_lex_result = lex(source, range);
                 assert_eq!(equal_lex_result.token.kind, TokenKind::Equal);

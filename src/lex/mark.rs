@@ -20,7 +20,7 @@ pub fn lex_mark(source: &Source, range: Range) -> Option<LexResult> {
     .collect();
 
     for (str, kind) in operators {
-        if !starts_with(source, &str, &remaining_range) {
+        if !starts_with(source, str, &remaining_range) {
             continue;
         }
         remaining_range.start.advance(str.len());

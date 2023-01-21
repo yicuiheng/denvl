@@ -89,11 +89,11 @@ fn string_from_node(source: &Source, pos: Position, node: &SyntaxNode) -> (Posit
             result += &ident_str;
             let (pos, equal_str) = string_from_token(source, pos, equal_token);
             result += &equal_str;
-            let (pos, init_str) = string_from_node(source, pos, &init_expr);
+            let (pos, init_str) = string_from_node(source, pos, init_expr);
             result += &init_str;
             let (pos, semicolon_str) = string_from_token(source, pos, semicolon_token);
             result += &semicolon_str;
-            let (pos, body_str) = string_from_node(source, pos, &body_expr);
+            let (pos, body_str) = string_from_node(source, pos, body_expr);
             result += &body_str;
             (pos, result)
         }
@@ -141,7 +141,7 @@ fn string_from_token(
         start: token_start_pos,
         end: token_end_pos,
     };
-    (pos, source.get(&token_range).into_iter().collect())
+    (pos, source.get(&token_range).iter().collect())
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]

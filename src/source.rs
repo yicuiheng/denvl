@@ -21,12 +21,11 @@ impl Source {
         let src = std::fs::read_to_string(path)?;
         let buffer = src
             .lines()
-            .map(|line| {
+            .flat_map(|line| {
                 let mut line: Vec<_> = line.chars().collect();
                 line.push('\n');
                 line
             })
-            .flatten()
             .collect();
         Ok(Source { buffer })
     }
@@ -38,7 +37,7 @@ impl Source {
     }
 
     pub fn check_pos_validity(&self, pos: Position) -> bool {
-        return pos.0 < self.buffer.len();
+        pos.0 < self.buffer.len()
     }
 
     pub fn range(&self) -> Range {
@@ -105,14 +104,14 @@ impl Range {
     where
         F: Fn(&Range) -> bool,
     {
-        while !self.is_empty() && !pred(&self) {
+        while !self.is_empty() && !pred(self) {
             self.start.advance(1)
         }
     }
 }
 
 pub fn starts_with(source: &Source, str: &str, range: &Range) -> bool {
-    let mut range = range.clone();
+    let mut range = *range;
     for expected in str.chars() {
         if range.is_empty() {
             return false;
@@ -136,12 +135,11 @@ impl Source {
         Self {
             buffer: str
                 .lines()
-                .map(|line| {
+                .flat_map(|line| {
                     let mut line: Vec<_> = line.chars().collect();
                     line.push('\n');
                     line
                 })
-                .flatten()
                 .collect(),
         }
     }

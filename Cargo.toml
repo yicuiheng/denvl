@@ -7,3 +7,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.0.0", features = ["cargo"] }
+daemonize = "0.4.0"
+jsonrpc = "0.14.0"
+nix = "0.26.0"
+rand = "0.8.5"

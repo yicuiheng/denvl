@@ -14,6 +14,7 @@ impl Diagnostic {
             Diagnostic::Error(DiagnosticError::MissedToken { pos, .. }) => *pos,
             Diagnostic::Error(DiagnosticError::UnknownToken { range }) => range.start,
             Diagnostic::Error(DiagnosticError::ExtraToken { range, .. }) => range.start,
+            Diagnostic::Error(DiagnosticError::Unknown { range }) => range.start,
             Diagnostic::Warning(..) => Position::start(),
         }
     }
@@ -23,20 +24,14 @@ impl Diagnostic {
             Diagnostic::Error(DiagnosticError::UnexpectedToken {
                 expected, actual, ..
             }) => {
-                format!(
-                    "unexpected token. expected {:?}, but actual is {:?}",
-                    expected, actual
-                )
+                format!("unexpected token. expected {expected:?}, but actual is {actual:?}")
             }
             Diagnostic::Error(DiagnosticError::MissedToken { expected, .. }) => {
-                format!("missing expected token. expected {:?}", expected)
+                format!("missing expected token. expected {expected:?}")
             }
-            Diagnostic::Error(DiagnosticError::UnknownToken { .. }) => {
-                format!("unknown token")
-            }
-            Diagnostic::Error(DiagnosticError::ExtraToken { .. }) => {
-                format!("extra token")
-            }
+            Diagnostic::Error(DiagnosticError::UnknownToken { .. }) => "unknown token".to_string(),
+            Diagnostic::Error(DiagnosticError::ExtraToken { .. }) => "extra token".to_string(),
+            Diagnostic::Error(DiagnosticError::Unknown { .. }) => "unknown error".to_string(),
             Diagnostic::Warning(..) => todo!(),
         }
     }
@@ -63,6 +58,9 @@ pub enum DiagnosticError {
         // 余分なトークン (e.g. '1 + = 2' の '=')
         range: Range,
         kind: TokenKind,
+    },
+    Unknown {
+        range: Range,
     },
 }
 

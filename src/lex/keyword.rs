@@ -9,7 +9,7 @@ pub fn lex_keyword(source: &Source, range: Range) -> Option<LexResult> {
     let keywords: HashMap<&str, TokenKind> = vec![("let", TokenKind::Let)].into_iter().collect();
 
     for (str, kind) in keywords {
-        if !starts_with(source, &str, &remaining_range) {
+        if !starts_with(source, str, &remaining_range) {
             continue;
         }
         remaining_range.start.advance(str.len());
