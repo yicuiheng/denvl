@@ -1,14 +1,10 @@
 #![feature(assert_matches, box_patterns)]
 
-mod commandline_client;
+mod command;
+mod communicate;
 mod consts;
 mod diagnostic;
-mod lex;
-mod named_pipe;
-mod parse;
-mod server;
-mod source;
-mod syntax_node;
+mod lang;
 use clap::{command, Arg, Command};
 
 const RUN_COMMAND: &str = "run";
@@ -32,10 +28,10 @@ fn main() {
             let filename = sub_matches
                 .get_one::<String>("filename")
                 .expect("<filename> required");
-            commandline_client::run(filename);
+            command::run::exec(filename)
         }
-        Some((SHUTDOWN_COMMAND, _)) => commandline_client::shutdown(),
-        Some((SERVER_COMMAND, _)) => server::run(),
+        Some((SHUTDOWN_COMMAND, _)) => command::shutdown::exec(),
+        Some((SERVER_COMMAND, _)) => command::server::exec(),
         _ => unreachable!(),
     }
 }
